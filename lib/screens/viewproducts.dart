@@ -45,8 +45,21 @@ class ViewProductsScreen extends StatelessWidget {
               return Card(
                 child: ListTile(
                   onTap: () => openEditProduct(context, index),
-                  leading:
-                      IconButton(onPressed: () {}, icon: Icon(Icons.favorite)),
+                  leading: IconButton(
+                    onPressed: () {
+                      //change the isFavorite value
+                      provider.toggleFavorite(index);
+                    },
+                    icon: Icon(
+                      provider.items[index].isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_outline,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    onPressed: null,
+                    icon: Icon(Icons.shopping_cart),
+                  ),
                   title: Text(provider.items[index].nameDesc),
                   subtitle: Text(provider.items[index].code),
                 ),
@@ -55,6 +68,10 @@ class ViewProductsScreen extends StatelessWidget {
             itemCount: provider.totalNoItems,
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: null,
+        child: Icon(Icons.shopping_cart_checkout),
       ),
     );
   }

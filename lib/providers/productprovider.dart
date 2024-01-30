@@ -25,5 +25,10 @@ class Products extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleFavorite(int index) {
+    _items[index].isFavorite = !_items[index].isFavorite;
+    notifyListeners();
+  }
+
   Product item(int index) => _items[index];
 }
