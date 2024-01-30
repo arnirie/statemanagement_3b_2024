@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:statemanagement_3b/providers/productprovider.dart';
 import 'package:statemanagement_3b/screens/viewproducts.dart';
 
 void main() {
@@ -10,9 +12,12 @@ class ActivityApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ViewProductsScreen(),
+    return ChangeNotifierProvider(
+      create: (_) => Products(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: ViewProductsScreen(),
+      ),
     );
   }
 }

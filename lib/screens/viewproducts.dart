@@ -1,59 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:statemanagement_3b/models/product.dart';
+import 'package:statemanagement_3b/providers/productprovider.dart';
 import 'package:statemanagement_3b/screens/manageproduct.dart';
 
-class ViewProductsScreen extends StatefulWidget {
+class ViewProductsScreen extends StatelessWidget {
   ViewProductsScreen({super.key});
 
-  @override
-  State<ViewProductsScreen> createState() => _ViewProductsScreenState();
-}
-
-class _ViewProductsScreenState extends State<ViewProductsScreen> {
-  //list of products
-  List<Product> listProducts = [
-    Product(
-      code: 'AB1',
-      nameDesc: 'iPhone 15',
-      price: 35000,
-    ),
-    Product(
-      code: 'XR1',
-      nameDesc: 'Samsung Galaxy Fold',
-      price: 31000,
-    ),
-  ];
-
-  void addProd(Product p) {
-    setState(() {
-      listProducts.add(p);
-    });
-
-    print(listProducts.length);
-  }
-
-  void editProd(Product p, int index) {
-    listProducts[index].nameDesc = p.nameDesc;
-    listProducts[index].price = p.price;
-    setState(() {});
-  }
-
-  void openAddProduct() {
+  void openAddProduct(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => ManageProductScreen(
-          addProduct: addProd,
-        ),
+        builder: (ctx) => ManageProductScreen(),
       ),
     );
   }
 
-  void openEditProduct(Product p, int index) {
+  void openEditProduct(BuildContext context, int index) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => ManageProductScreen(
-          editProduct: editProd,
-          product: p,
           index: index,
         ),
       ),
@@ -68,22 +33,28 @@ class _ViewProductsScreenState extends State<ViewProductsScreen> {
         backgroundColor: Colors.amber,
         actions: [
           IconButton(
-            onPressed: openAddProduct,
+            onPressed: () => openAddProduct(context),
             icon: Icon(Icons.add),
           ),
         ],
       ),
-      body: ListView.builder(
-        itemBuilder: (_, index) {
-          return Card(
-            child: ListTile(
-              onTap: () => openEditProduct(listProducts[index], index),
-              title: Text(listProducts[index].nameDesc),
-              subtitle: Text(listProducts[index].code),
-            ),
+      body: Consumer<Products>(
+        builder: (_, provider, child) {
+          return ListView.builder(
+            itemBuilder: (_, index) {
+              return Card(
+                child: ListTile(
+                  onTap: () => openEditProduct(context, index),
+                  leading:
+                      IconButton(onPressed: () {}, icon: Icon(Icons.favorite)),
+                  title: Text(provider.items[index].nameDesc),
+                  subtitle: Text(provider.items[index].code),
+                ),
+              );
+            },
+            itemCount: provider.totalNoItems,
           );
         },
-        itemCount: listProducts.length,
       ),
     );
   }

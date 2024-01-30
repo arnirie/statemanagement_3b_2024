@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
 import 'package:statemanagement_3b/models/product.dart';
-import 'package:statemanagement_3b/providers/productprovider.dart';
 
 class ManageProductScreen extends StatefulWidget {
-  ManageProductScreen({super.key, this.index});
+  ManageProductScreen(
+      {super.key, this.addProduct, this.editProduct, this.product, this.index});
 
+  final Function(Product p)? addProduct;
+  final Function(Product p, int index)? editProduct;
+  Product? product;
   final int? index;
 
   @override
@@ -24,20 +26,18 @@ class _ManageProductScreenState extends State<ManageProductScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (widget.product != null) {
+      codeController.text = widget.product!.code;
+      nameController.text = widget.product!.nameDesc;
+      priceController.text = widget.product!.price.toString();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<Products>(context, listen: false);
-    if (widget.index != null) {
-      var product = provider.item(widget.index!);
-      codeController.text = product.code;
-      nameController.text = product.nameDesc;
-      priceController.text = product.price.toString();
-    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.index == null ? 'Add Product' : 'Edit Product'),
+        title: Text(widget.product == null ? 'Add Product' : 'Edit Product'),
         backgroundColor: Colors.amber,
       ),
       body: Padding(
@@ -46,7 +46,7 @@ class _ManageProductScreenState extends State<ManageProductScreen> {
           children: [
             TextField(
               controller: codeController,
-              readOnly: widget.index != null,
+              readOnly: widget.product != null,
               decoration: InputDecoration(
                 label: Text('Code'),
                 border: OutlineInputBorder(),
@@ -78,14 +78,14 @@ class _ManageProductScreenState extends State<ManageProductScreen> {
                   nameDesc: nameController.text,
                   price: double.parse(priceController.text),
                 );
-                if (widget.index == null) {
-                  provider.add(product);
+                if (widget.product == null) {
+                  widget.addProduct!(product);
                 } else {
-                  provider.edit(product, widget.index!);
+                  widget.editProduct!(product, widget.index!);
                 }
                 Navigator.of(context).pop();
               },
-              child: Text(widget.index == null ? 'ADD' : 'EDIT'),
+              child: Text(widget.product == null ? 'ADD' : 'EDIT'),
             ),
           ],
         ),
