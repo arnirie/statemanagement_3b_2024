@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:statemanagement_3b/models/product.dart';
 
 class Products extends ChangeNotifier {
-  List<Product> _items = [];
+  List<Product> _items = [
+    Product(code: '11', nameDesc: '11', price: 11),
+    Product(code: '22', nameDesc: '22', price: 22),
+  ];
 
   // List<Product> get items {
   //   return _items;

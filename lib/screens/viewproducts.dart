@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:statemanagement_3b/helpers/dbhelper.dart';
+import 'package:statemanagement_3b/models/cartitem.dart';
 import 'package:statemanagement_3b/models/product.dart';
+import 'package:statemanagement_3b/providers/cartprovider.dart';
 import 'package:statemanagement_3b/providers/productprovider.dart';
 import 'package:statemanagement_3b/screens/manageproduct.dart';
+import 'package:statemanagement_3b/screens/viewcart.dart';
 
 class ViewProductsScreen extends StatelessWidget {
   ViewProductsScreen({super.key});
@@ -27,6 +31,8 @@ class ViewProductsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DbHelper.openDb();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('View Products'),
@@ -57,7 +63,14 @@ class ViewProductsScreen extends StatelessWidget {
                     ),
                   ),
                   trailing: IconButton(
-                    onPressed: null,
+                    onPressed: () {
+                      Provider.of<CartItems>(context, listen: false).add(
+                        CartItem(
+                          code: provider.items[index].code,
+                        ),
+                      );
+                      // print(provider.items[index].code);
+                    },
                     icon: Icon(Icons.shopping_cart),
                   ),
                   title: Text(provider.items[index].nameDesc),
@@ -70,7 +83,8 @@ class ViewProductsScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: null,
+        onPressed: () => Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => ViewCartScreen())),
         child: Icon(Icons.shopping_cart_checkout),
       ),
     );

@@ -42,8 +42,8 @@ class _ViewProductsScreenState extends State<ViewProductsScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => ManageProductScreen(
-          addProduct: addProd,
-        ),
+            // addProduct: addProd,
+            ),
       ),
     );
   }
@@ -52,8 +52,8 @@ class _ViewProductsScreenState extends State<ViewProductsScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => ManageProductScreen(
-          editProduct: editProd,
-          product: p,
+          // editProduct: editProd,
+          // product: p,
           index: index,
         ),
       ),
