@@ -31,8 +31,6 @@ class ViewProductsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DbHelper.openDb();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('View Products'),
@@ -46,39 +44,59 @@ class ViewProductsScreen extends StatelessWidget {
       ),
       body: Consumer<Products>(
         builder: (_, provider, child) {
-          return ListView.builder(
-            itemBuilder: (_, index) {
-              return Card(
-                child: ListTile(
-                  onTap: () => openEditProduct(context, index),
-                  leading: IconButton(
-                    onPressed: () {
-                      //change the isFavorite value
-                      provider.toggleFavorite(index);
-                    },
-                    icon: Icon(
-                      provider.items[index].isFavorite
-                          ? Icons.favorite
-                          : Icons.favorite_outline,
-                    ),
-                  ),
-                  trailing: IconButton(
-                    onPressed: () {
-                      Provider.of<CartItems>(context, listen: false).add(
-                        CartItem(
-                          code: provider.items[index].code,
+          return FutureBuilder(
+            future: provider.items,
+            builder: (context, snapshot) {
+              //data is not ready
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              //ready but not contents
+              if (snapshot.data == null) {
+                return Center(
+                  child: Text('No records found'),
+                );
+              }
+              //with fetched records
+              var prodList = snapshot.data!;
+              print(prodList.length);
+              return ListView.builder(
+                itemBuilder: (_, index) {
+                  return Card(
+                    child: ListTile(
+                      onTap: () => openEditProduct(context, index),
+                      leading: IconButton(
+                        onPressed: () {
+                          //change the isFavorite value
+                          provider.toggleFavorite(index);
+                        },
+                        icon: Icon(
+                          prodList[index].isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_outline,
                         ),
-                      );
-                      // print(provider.items[index].code);
-                    },
-                    icon: Icon(Icons.shopping_cart),
-                  ),
-                  title: Text(provider.items[index].nameDesc),
-                  subtitle: Text(provider.items[index].code),
-                ),
+                      ),
+                      trailing: IconButton(
+                        onPressed: () {
+                          Provider.of<CartItems>(context, listen: false).add(
+                            CartItem(
+                              code: prodList[index].code,
+                            ),
+                          );
+                          // print(provider.items[index].code);
+                        },
+                        icon: Icon(Icons.shopping_cart),
+                      ),
+                      title: Text(prodList[index].nameDesc),
+                      subtitle: Text(prodList[index].code),
+                    ),
+                  );
+                },
+                itemCount: prodList.length,
               );
             },
-            itemCount: provider.totalNoItems,
           );
         },
       ),
